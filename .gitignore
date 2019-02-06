@@ -1,0 +1,6 @@
+/streamer
+/vendor
+/go
+.*
+!.gitignore
+!.dockerignore

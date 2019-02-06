@@ -1,0 +1,10 @@
+
+The streamer worker uses a private key, but this is not part of the key
+generation so far.
+
+Need to generate manually thus:
+
+  dd bs=1 count=16 if=/dev/random of=key
+
+  kubectl create secret generic streamer-creds \
+          --from-file=key

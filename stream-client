@@ -1,0 +1,43 @@
+#!/usr/bin/env python
+
+import hashlib
+import base64
+import os
+import sys
+import socket
+
+if len(sys.argv) != 4:
+   sys.stderr.write("Usage:\n")
+   sys.stderr.write("  stream-client host port keyfile\n")
+   sys.exit(1)
+
+host = sys.argv[1]
+port = int(sys.argv[2])
+
+with open(sys.argv[3], "r") as file:
+     key = file.read()
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.connect((host, port))
+
+challenge = ""
+while True:
+      buf = sock.recv(1)
+
+      if buf[0] == '\r': continue
+      if buf[0] == '\n': break
+      challenge += buf[0]
+
+response = key + ":" + base64.b64decode(challenge)
+hash = hashlib.sha256()
+hash.update(response)
+response = base64.b64encode(hash.digest()) + "\n"
+
+sock.send(response)
+
+while True:
+      a = sock.recv(256)
+      sys.stdout.write(a)
+
+
+      	 
